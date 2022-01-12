@@ -1,3 +1,6 @@
+from pytest_mock import mocker
+
+
 def fn(n):
     print(n ** 2)
 
@@ -26,3 +29,25 @@ def test_mock(mocker):
     assert print.call_args == mocker.call(64)
     assert print.call_args_list == [mocker.call(9), mocker.call(64)]
     assert print.call_count == 2
+
+
+class AAA:
+    def __init__(self, name) -> None:
+        self.name = name
+
+    def bbb(self, age):
+        return f"{self.name} is age {age}"
+
+
+def test_class_instance(mocker):
+    mock = mocker.patch.object(AAA, "__init__", return_value=None)
+    ins = AAA("alice")
+    mock.assert_called_with("alice")
+
+
+def test_class_method(mocker):
+    mock = mocker.patch.object(AAA, "bbb")
+    ins = AAA("alice")
+    ins.bbb(3)
+    mock.assert_called_with(3)
+    print(mock, AAA, ins.name, mock.call_args_list)
